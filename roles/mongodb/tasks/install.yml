@@ -1,0 +1,62 @@
+---
+
+- name: Upgrade APT & Install MongoDB APT Dependencies
+  package:
+    name: "{{ apt_dependencies }}"
+    state: latest
+
+- name: Install necessary python packages
+  pip: 
+    name: "{{ item }}"
+  loop:
+    - "pymongo"
+
+- name: Get APT Key
+  apt_key:
+    url: https://www.mongodb.org/static/pgp/server-{{ mongodb_apt_key_version }}.asc
+    state: present
+
+- name: "Add repo"
+  apt_repository:
+    repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/{{ ansible_distribution|lower }} {{ ansible_distribution_release }}/mongodb-org/{{ mongodb_apt_key_version }} multiverse"
+    filename: "mongodb-org-{{ mongodb_apt_key_version }}"
+    update_cache: true
+    state: present
+
+- name: Install MongoDB from APT
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    allow_downgrade: yes
+    state: latest
+  loop:
+    - "mongodb-org={{ mongodb_full_version }}"
+    - "mongodb-org-server={{ mongodb_full_version }}"
+    - "mongodb-org-shell={{ mongodb_full_version }}"
+    - "mongodb-org-mongos={{ mongodb_full_version }}"
+    - "mongodb-org-tools={{ mongodb_full_version }}"
+  notify:
+    - restart mongodb
+
+- name: Template out MongoDB configuration
+  template:
+    src: mongod.conf.j2
+    dest: "/etc/mongod.conf"
+  notify:
+    - restart mongodb
+
+- name: Ensure Mongod is started
+  systemd:
+    name: mongod
+    state: started
+
+- name: Initiate Replica Set
+  community.mongodb.mongodb_replicaset:
+    login_host: localhost
+    login_user: "{{ mongodb_login_user }}"
+    login_password: "{{ mongodb_login_pass }}"
+    replica_set: rs0
+    members: "{{ groups['raspberry_pi'] | map('extract', hostvars, ['ansible_eth0', 'ipv4', 'address']) }}"
+  run_once: true
+  notify:
+    - restart mongodb

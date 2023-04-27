@@ -1,0 +1,4 @@
+[raspberry_pi]
+192.168.2.100       pi_hostname=kube_master01       ansible_user=ubuntu
+192.168.2.101       pi_hostname=kube_worker01       ansible_user=ubuntu
+192.168.2.102       pi_hostname=kube_worker02       ansible_user=ubuntu

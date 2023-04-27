@@ -1,0 +1,5 @@
+- include_tasks: install.yml
+  when: mongo_state is not defined
+
+- include_tasks: uninstall.yml
+  when: mongo_state is defined and mongo_state == 'absent'

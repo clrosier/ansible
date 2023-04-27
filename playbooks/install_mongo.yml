@@ -1,0 +1,8 @@
+---
+- name: Install MongoDB Cluster
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - { role: mongodb, vars: { mongodb_apt_key_version: "4.4", mongodb_full_version: "4.4.18" }, tags: [] }

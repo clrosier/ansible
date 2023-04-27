@@ -1,0 +1,8 @@
+---
+- name: Uninstall MongoDB Cluster
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - { role: mongodb, vars: { mongodb_version: "6.0", mongo_state: absent }, tags: [] }
