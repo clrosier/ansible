@@ -2,7 +2,7 @@
 apt_dependencies:
   - wget
   - curl
-  - gnupg2
+  - gnupg
   - software-properties-common
   - apt-transport-https
   - ca-certificates

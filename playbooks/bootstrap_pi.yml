@@ -1,0 +1,10 @@
+---
+- name: Bootstrap Raspberry Pis
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - { role: sys_packages,     vars: { }, tags: []}
+    - { role: docker,           vars: { }, tags: []}
+  
