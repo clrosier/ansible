@@ -1,5 +1,42 @@
-- include_tasks: install.yml
-  when: mongo_state is not defined
+- name: Create Docker network
+  community.docker.docker_network:
+    name: mongo-cluster
+    state: present
 
-- include_tasks: uninstall.yml
-  when: mongo_state is defined and mongo_state == 'absent'
+- name: Pull Docker image
+  community.docker.docker_image:
+    name: mongo:{{ mongodb_version }}
+    source: pull
+
+- name: Remove old container
+  community.docker.docker_container:
+    name: mongodb
+    state: absent
+
+- name: Create mongodb docker volume
+  community.docker.docker_volume:
+    name: mongodb_data
+    state: present
+
+- name: Create mongo directory
+  file:
+    path: /home/ubuntu/mongo
+    state: directory
+
+- name: Template out Mongo Init Script
+  template:
+    src: init-mongo.js.j2
+    dest: /home/ubuntu/mongo/init-mongo.js
+
+- name: Run Docker container
+  community.docker.docker_container:
+    name: mongodb
+    image: mongo:{{ mongodb_version }}
+    state: started
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_data:/data/db
+    env:
+      MONGO_INITDB_ROOT_USERNAME: "{{ mongodb_root_user }}"
+      MONGO_INITDB_ROOT_PASSWORD: "{{ mongodb_root_pass }}"

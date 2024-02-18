@@ -1,9 +1,8 @@
 ---
 - name: Install MongoDB Cluster
-  hosts: all
+  hosts: mongodb_hosts
   gather_facts: yes
   become: yes
 
   roles:
-    - { role: pip,     vars: { pip_version: 23.3.1, pip_get_pip_version: latest, pip_executable: pip }, tags: []}
-    - { role: mongodb, vars: { mongodb_apt_key_version: 4.4, mongodb_full_version: 4.4 }, tags: [] }
+    - { role: mongodb, vars: { mongodb_version: 4.4 }, tags: ["mongodb"] }

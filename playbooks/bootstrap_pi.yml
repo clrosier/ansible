@@ -1,10 +1,12 @@
 ---
 - name: Bootstrap Raspberry Pis
   hosts: all
-  gather_facts: yes
-  become: yes
+  gather_facts: true
+  become: true
 
   roles:
-    - { role: sys_packages,     vars: { }, tags: []}
-    - { role: docker,           vars: { }, tags: []}
+    - { role: static_ip,    vars: { router_ip: "192.168.2.1", interface: "wlan0", dns_server: "192.168.2.1" }, tags: ["static_ip", "bootstrap"]}
+    - { role: sys_packages, vars: { }, tags: ["sys_packages", "bootstrap"]}
+    - { role: docker,       vars: { }, tags: ["docker", "bootstrap"]}
+
   

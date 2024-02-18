@@ -1,7 +1,11 @@
 [raspberry_pi]
-192.168.2.200       pi_hostname=kube-master01       ansible_user=ubuntu
-192.168.2.201       pi_hostname=kube-worker01       ansible_user=ubuntu
-192.168.2.202       pi_hostname=kube-worker02       ansible_user=ubuntu
+192.168.2.250       pi_hostname=kube-controller01       ansible_user=ubuntu
+192.168.2.251       pi_hostname=kube-worker01           ansible_user=ubuntu
+192.168.2.252       pi_hostname=kube-worker02           ansible_user=ubuntu
+192.168.2.253       pi_hostname=kube-worker03           ansible_user=ubuntu
 
 [raspberry_pi:vars]
 ansible_become_pass='{{ ubuntu_sudo_pass }}'
+
+[mongodb_hosts]
+192.168.2.251       pi_hostname=kube-worker01           ansible_user=ubuntu     mongodb_role=primary
